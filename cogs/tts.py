@@ -83,7 +83,7 @@ class tts(commands.Cog):
     @app_commands.command(name='disconnect', description='VCから切断します')
     @app_commands.guild_only()
     async def leave(self, interaction: discord.Interaction):
-        if self.bot.guild.voice_client != None:
+        if self.bot.guild.voice_client is not None:
             if interaction.channel is self.bot.guild.voice_client.channel:
                 if interaction.user.voice.channel is self.bot.guild.voice_client.channel:
                     await self.bot.guild.voice_client.disconnect()
