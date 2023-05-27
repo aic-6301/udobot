@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import traceback
+from motor import motor_asyncio as motor
 
 import discord
 from discord import Activity, ActivityType, Intents
@@ -18,6 +19,10 @@ class Bot(BotBase):
             intents=Intents.all())
 
     async def on_ready(self):
+        # DB関係
+        bot.dbclient = motor.AsyncIOMotorClient("mongodb://localhost:27017")
+        bot.db = bot.dbclient["udobot"]
+        bot.vc_info = bot.db.vc_info
         # Cogを'./cogs'からロード
         for file in os.listdir("./cogs"):
             if file.endswith(".py"):
