@@ -26,6 +26,7 @@ class Bot(BotBase):
                 except Exception:
                     traceback.print_exc()
         await self.load_extension("jishaku") # jishakuをロード
+        await self.change_presence(activity=discord.Game("色んな人によるこの鯖だけのぼっと"))
         print("起動したよ！！！")
 
 
