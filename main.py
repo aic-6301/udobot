@@ -23,6 +23,7 @@ class Bot(BotBase):
             if file.endswith(".py"):
                 try:
                     await self.load_extension(f"cogs.{file[:-3]}")
+                    print(f"Loaded cogs: cogs.{file[:-3]}")
                 except Exception:
                     traceback.print_exc()
         await self.load_extension("jishaku") # jishakuをロード
