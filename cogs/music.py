@@ -160,6 +160,7 @@ class Music(commands.Cog):
         que.empty()
         await interaction.guild.voice_client.disconnect()
         await interaction.response.send_message("切断しました。")
+        asyncio.sleep(2)
         shutil.rmtree("./music/")
 
     @group.command(name="skip")
