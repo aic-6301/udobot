@@ -23,6 +23,7 @@ class Bot(BotBase):
         bot.dbclient = motor.AsyncIOMotorClient("mongodb://localhost:27017")
         bot.db = bot.dbclient["udobot"]
         bot.vc_info = bot.db.vc_info
+        bot.status_msg = bot.db.status_msg
         # Cogを'./cogs'からロード
         for file in os.listdir("./cogs"):
             if file.endswith(".py"):
