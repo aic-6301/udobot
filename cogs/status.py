@@ -19,8 +19,9 @@ class status(commands.Cog):
     @tasks.loop(minutes=10)
     async def send_system_status(self):
         msg_id = await self.bot.status_msg.find_one({"guild_id": "1112710479874379837"}, {"_id":None})
-        msg = await self.bot.get_channel(1112710479874379837).fetch_message(msg_id['message_id'])
-        if msg is None:
+        try:
+            msg = await self.bot.get_channel(1112710479874379837).fetch_message(msg_id['message_id'])
+        except Exception: 
             msg = await self.bot.get_channel(1112710479874379837).send(embed=discord.Embed(title="Loading..."))
             self.bot.status_msg.replace_one(
                 {"guild_id": "1112710479874379837"},
