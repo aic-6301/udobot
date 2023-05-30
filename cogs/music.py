@@ -117,7 +117,7 @@ class Music(commands.Cog):
             pass
         player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=stream)
         await que.put(player)
-        await interaction.response.send_message("キューに追加しました。", ephemeral=True)
+        await interaction.response.send_message(f"キューに追加しました。", ephemeral=True)
         await self.play_song(interaction)
     
     @group.command()
