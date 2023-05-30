@@ -20,10 +20,10 @@ class Bot(BotBase):
 
     async def on_ready(self):
         # DB関係
-        bot.dbclient = motor.AsyncIOMotorClient("mongodb://localhost:27017")
-        bot.db = bot.dbclient["udobot"]
-        bot.vc_info = bot.db.vc_info
-        bot.status_msg = bot.db.status_msg
+        self.dbclient = motor.AsyncIOMotorClient("mongodb://localhost:27017")
+        self.db = self.dbclient["udobot"]
+        self.vc_info = self.db.vc_info
+        self.status_msg = self.db.status_msg
         # Cogを'./cogs'からロード
         for file in os.listdir("./cogs"):
             if file.endswith(".py"):
