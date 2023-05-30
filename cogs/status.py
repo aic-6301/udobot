@@ -16,7 +16,7 @@ class status(commands.Cog):
         self.bot = bot
         self.send_system_status.start()
 
-    @tasks.loop()
+    @tasks.loop(minutes=1)
     async def send_system_status(self):
         msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
         # CPU使用率を取得
