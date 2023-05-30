@@ -16,7 +16,7 @@ class status(commands.Cog):
         self.bot = bot
         self.send_system_status.start()
 
-    @tasks.loop(minutes=10)
+    @tasks.loop()
     async def send_system_status(self):
         msg_id = await self.bot.status_msg.find_one({"guild_id": "1112710479874379837"}, {"_id":None})
         try:
