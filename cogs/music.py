@@ -94,15 +94,15 @@ class Music(commands.Cog):
     
     async def play_song(self, interaction):
         global player
-        if interaction.guild.voice_client.is_playing():
+        if interaction.guild.voice_client.is_playing(): # 再生中か確認
             return
-        if que.empty():
+        if que.empty(): # キューがあるか確認
             return
-        player = await que.get()
-        loop = asyncio.get_event_loop()
+        player = await que.get() # キューから曲を取得
+        loop = asyncio.get_event_loop() # タスク作成用
         interaction.guild.voice_client.play(player, after=lambda _:loop.create_task(self.play_song(interaction)))
         await interaction.channel.send(f"再生中: {player.title}")
-        await self.timer.start()
+        await self.timer.start() # 残り何秒か計算用
 
 
     @group.command()
@@ -112,11 +112,11 @@ class Music(commands.Cog):
         elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         try:
-            os.mkdir("./music/")
+            os.mkdir("./music/") # 音楽を保存する場所
         except Exception:
             pass
-        player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=stream)
-        await que.put(player)
+        player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=stream) # ダウンロード
+        await que.put(player) # キューを追加
         await interaction.response.send_message(f"キューに追加しました。", ephemeral=True)
         await self.play_song(interaction)
     
@@ -126,12 +126,12 @@ class Music(commands.Cog):
             await interaction.channel.connect()
         elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message(f"すでに別のチャンネルに接続しています！")
-        if interaction.guild.voice_client.is_playing():
+        if interaction.guild.voice_client.is_playing(): # 再生中か確認
             await interaction.channel.send("現在再生中のものを止め、{url}を再生します。")
             await interaction.guild.voice_client.stop()
             await interaction.response.send_message("キューに追加しました。", ephemeral=True)
         await interaction.response.send_message("キューに追加しました。", ephemeral=True)
-        interaction.guild.voice_client.play(discord.FFmpegPCMAudio(url))
+        interaction.guild.voice_client.play(discord.FFmpegPCMAudio(url)) # ラジオを再生
         await interaction.channel.send(f"再生中: {url}")
     
     @group.command()
@@ -154,19 +154,19 @@ class Music(commands.Cog):
 
     @group.command()
     async def volume(self, interaction:discord.Interaction, volume: int):
-        """Changes the player's volume"""
+        """ボリュームを変更します。"""
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
         elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
-        if 0 > volume < 200:
+        if 0 < volume > 200:
             await interaction.response.send_message("0〜200の間のみ指定可能です。", ephemeral=True)
-        interaction.guild.voice_client.source.volume = volume / 100
+        interaction.guild.voice_client.source.volume = volume / 100 # ボリューム設定
         await interaction.response.send_message(f"ボリューム：{volume}%")
 
     @group.command()
     async def stop(self, interaction:discord.Interaction):
-        """Stops and disconnects the bot from voice"""
+        """再生を停止し、切断します。"""
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
         elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
@@ -175,7 +175,7 @@ class Music(commands.Cog):
         await interaction.guild.voice_client.disconnect()
         await interaction.response.send_message("切断しました。")
         asyncio.sleep(2)
-        shutil.rmtree("./music/")
+        shutil.rmtree("./music/") # 音楽を保存する場所を削除
 
     @group.command(name="skip")
     async def skip(self, interaction:discord.Interaction):
@@ -183,9 +183,8 @@ class Music(commands.Cog):
             return await interaction.response.send_message("VCに接続されていません！")
         elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
-        interaction.guild.voice_client.stop()
+        interaction.guild.voice_client.stop() # 再生停止
         await interaction.response.send_message("曲を飛ばしました。")
-        await self.play_song(interaction)
     
     @group.command(name="nowplaying")
     async def nowplaying(self, interaction:discord.Interaction):
