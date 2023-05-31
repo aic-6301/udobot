@@ -66,14 +66,11 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
     @classmethod # ダウンロード
     async def from_url(cls, url, *, loop=None, stream=False, play=False):
-        global duration, duration_now
         loop = loop or asyncio.get_event_loop()
         data = await loop.run_in_executor(None, lambda: ytdl.extract_info(url, download=not stream or play))
         if 'entries' in data:
             # take first item from a playlist
             data = data['entries'][0]
-        duration = data['duration']
-        duration_now = duration
         filename = data['url'] if stream else ytdl.prepare_filename(data)
         file = shutil.move(filename, f"./music/{filename}")
         return cls(discord.FFmpegPCMAudio(file, **ffmpeg_options), data=data)
@@ -99,6 +96,9 @@ class Music(commands.Cog):
         if que.empty(): # キューがあるか確認
             return
         player = await que.get() # キューから曲を取得
+        global duration, duration_now
+        duration = player.duration
+        duration_now = duration
         loop = asyncio.get_event_loop() # タスク作成用
         interaction.guild.voice_client.play(player, after=lambda _:loop.create_task(self.play_song(interaction)))
         await interaction.channel.send(f"再生中: {player.title}")
@@ -121,13 +121,13 @@ class Music(commands.Cog):
         await self.play_song(interaction)
     
     @group.command()
-    async def radio(self, interaction:discord.Interaction, *, url:str, stream:bool):
+    async def radio(self, interaction:discord.Interaction, *, url:str):
         if not interaction.guild.voice_client:
             await interaction.channel.connect()
         elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message(f"すでに別のチャンネルに接続しています！")
         if interaction.guild.voice_client.is_playing(): # 再生中か確認
-            await interaction.channel.send("現在再生中のものを止め、{url}を再生します。")
+            await interaction.channel.send(f"現在再生中のものを止め、{url}を再生します。")
             await interaction.guild.voice_client.stop()
             await interaction.response.send_message("キューに追加しました。", ephemeral=True)
         await interaction.response.send_message("キューに追加しました。", ephemeral=True)
