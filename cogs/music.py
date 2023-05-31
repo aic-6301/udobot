@@ -121,6 +121,20 @@ class Music(commands.Cog):
         await self.play_song(interaction)
     
     @group.command()
+    async def radio(self, interaction:discord.Interaction, *, url:str, stream:bool):
+        if not interaction.guild.voice_client:
+            await interaction.channel.connect()
+        elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
+            await interaction.response.send_message(f"すでに別のチャンネルに接続しています！")
+        if interaction.guild.voice_client.is_playing():
+            await interaction.channel.send("現在再生中のものを止め、{url}を再生します。")
+            await interaction.guild.voice_client.stop()
+            await interaction.response.send_message("キューに追加しました。", ephemeral=True)
+        await interaction.response.send_message("キューに追加しました。", ephemeral=True)
+        interaction.guild.voice_client.play(discord.FFmpegPCMAudio(url))
+        await interaction.channel.send(f"再生中: {url}")
+    
+    @group.command()
     async def resume(self, interaction):
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
