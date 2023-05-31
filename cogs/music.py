@@ -112,12 +112,13 @@ class Music(commands.Cog):
         elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         try:
+            shutil.rmtree("./music/")
             os.mkdir("./music/") # 音楽を保存する場所
         except Exception:
             pass
         player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=stream) # ダウンロード
         await que.put(player) # キューを追加
-        await interaction.response.send_message(f"キューに追加しました。", ephemeral=True)
+        await interaction.response.send_message(f"キューに追加しました。{player.title}", ephemeral=True)
         await self.play_song(interaction)
     
     @group.command()
@@ -174,8 +175,6 @@ class Music(commands.Cog):
         que.empty()
         await interaction.guild.voice_client.disconnect()
         await interaction.response.send_message("切断しました。")
-        asyncio.sleep(2)
-        shutil.rmtree("./music/") # 音楽を保存する場所を削除
 
     @group.command(name="skip")
     async def skip(self, interaction:discord.Interaction):
