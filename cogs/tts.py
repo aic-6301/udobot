@@ -10,6 +10,7 @@ from gtts import gTTS
 from collections import deque
 
 regex = r"https?://.*?( |$)"
+joincall = False
 
 
 class tts(commands.Cog):
@@ -21,91 +22,29 @@ class tts(commands.Cog):
     @app_commands.guild_only()
     @app_commands.guilds(1111683749969657938)
     async def join(self, interaction: discord.Interaction, joinannounce: bool = False):
-        vcinfo = await self.bot.vc_info.find_one({
-            'channel_id': interaction.channel_id
-        }, {
-            "_id": False  # 内部IDを取得しないように
-        })
-        ttsinfo = await self.bot.vc_info.find_one({
-            "tts": True
-        }, {
-            "_id": False  # 内部IDを取得しないように
-        })
-        radioinfo = await self.bot.vc_info.find_one({
-            "radio": True
-        }, {
-            "_id": False  # 内部IDを取得しないように
-        })
-        ttsbotinfo = await self.bot.ttsvc_info.find_one({
-            'channel_id': interaction.channel.id
-        }, {
-            "_id": False  # 内部IDを取得しないように
-        })
-        if vcinfo is not None:
-            if ttsinfo is None and radioinfo is None:
+            global joincall
+            if interaction.guild.voice_client is None:
                 if interaction.user.voice.channel is interaction.channel:
-                    if ttsbotinfo['tts'] is False:
                         await interaction.channel.connect()
+                        if joinannounce is True:
+                            joincall = True
                         await interaction.response.send_message('接続しました')
-                        vcinfo = await self.bot.vc_info.find_one({
-                            'channel_id': interaction.channel_id
-                        }, {
-                            "_id": False  # 内部IDを取得しないように
-                        })
-                        new_info = {
-                            'channel': vcinfo['channel'],
-                            'channel_id': interaction.channel_id,
-                            'owner_id': vcinfo['owner_id'],
-                            'tts': True,
-                            'joincall': joinannounce,
-                            'radio': False,
-                            'radioURL': None,
-                            'mode': vcinfo['mode'],
-                            'dashboard_id': vcinfo['dashboard_id']
-                        }
-                        await self.bot.vc_info.replace_one({
-                            'channel_id': interaction.channel_id
-                        }, new_info, upsert=True)
                         try:
                             shutil.rmtree(self.bot.tts_file)
                             os.mkdir(self.bot.tts_file)
                         except:
                             pass
-                    else:
-                        await interaction.response.send_message('既にTTSモードとして接続されています\nVCから切断して再度コマンドを実行してください')
                 else:
                     await interaction.response.send_message('接続に失敗しました\nこのコマンドは接続しているVCの聞き専チャンネルで使用してください')
             else:
                 await interaction.response.send_message('他のチャンネルですでにbotが使用されているため使用できません')
-        else:
-            await interaction.response.send_message('このコマンドは接続しているVCの聞き専チャンネルで使用してください')
 
     @app_commands.command(name='disconnect', description='VCから切断します')
     @app_commands.guild_only()
     async def leave(self, interaction: discord.Interaction):
-        if self.bot.guild.voice_client is not None:
-            if interaction.channel is self.bot.guild.voice_client.channel:
-                if interaction.user.voice.channel is self.bot.guild.voice_client.channel:
-                    await self.bot.guild.voice_client.disconnect()
-                    vcinfo = await self.bot.vc_info.find_one({
-                        'channel_id': interaction.channel_id
-                    }, {
-                        "_id": False  # 内部IDを取得しないように
-                    })
-                    new_info = {
-                        'channel': vcinfo['channel'],
-                        'channel_id': interaction.channel_id,
-                        'owner_id': vcinfo['owner_id'],
-                        'tts': False,
-                        'joincall': False,
-                        'radio': False,
-                        'radioURL': None,
-                        'mode': vcinfo['mode'],
-                        'dashboard_id': vcinfo['dashboard_id']
-                    }
-                    await self.bot.vc_info.replace_one({
-                        'channel_id': interaction.channel_id
-                    }, new_info, upsert=True)
+        if interaction.guild.voice_client is not None:
+            if interaction.channel is interaction.guild.voice_client.channel:
+                if interaction.user.voice.channel is interaction.guild.voice_client.channel:
                     await interaction.response.send_message('切断しました')
                     return
         await interaction.response.send_message('失敗しました')
@@ -113,9 +52,9 @@ class tts(commands.Cog):
     # stopコマンド
     @app_commands.command(name='stop', description='読み上げを停止します')
     async def stop(self, interaction: discord.Interaction):
-        if interaction.channel is self.bot.guild.voice_client.channel:
+        if interaction.channel is interaction.guild.voice_client.channel:
             try:
-                self.bot.guild.voice_client.stop()
+                interaction.guild.voice_client.stop()
                 await interaction.response.send_message('読み上げを停止しました')
             except:
                 await interaction.response.send_message('なぜか実行できませんでした', ephemeral=True)
@@ -125,13 +64,7 @@ class tts(commands.Cog):
     # メッセージ取得
     @commands.Cog.listener()
     async def on_message(self, message):
-        vcinfo = await self.bot.vc_info.find_one({
-            'channel_id': message.channel.id
-        }, {
-            "_id": False  # 内部IDを取得しないように
-        })
         try:
-            if vcinfo['tts'] is True:
                 if message.author.bot is False:
                         message_queue = deque([])
                         i = 0
@@ -163,28 +96,9 @@ class tts(commands.Cog):
                             self.bot.guild.voice_client.play(discord.FFmpegPCMAudio(f"./.tts_voice/{name}.mp3"))
         except TypeError:
             return
-
+    """
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        beforeinfo = None
-        afterinfo = None
-        try:
-            beforeinfo = await self.bot.vc_info.find_one({
-                'channel_id': before.channel.id
-            }, {
-                "_id": False  # 内部IDを取得しないように
-            })
-        except AttributeError:
-            pass
-        try:
-            afterinfo = await self.bot.vc_info.find_one({
-                'channel_id': after.channel.id
-            }, {
-                "_id": False  # 内部IDを取得しないように
-            })
-        except AttributeError:
-            pass
-
         # Botは弾く
         if member.bot is False:
             # 入退出以外は弾く
@@ -194,7 +108,7 @@ class tts(commands.Cog):
                 # TTS実行中か判断&入退出判断
                 # 退出
                 try:
-                    if beforeinfo['joincall'] is True:
+                    if joincall is True:
                         call_queue = deque([])
                         if afterinfo is not None:
                             message = (f'{member.name}:が移動しました')
@@ -235,6 +149,7 @@ class tts(commands.Cog):
         elif member.id is self.bot.user.id:
             if before.channel is not None and after.channel is None and beforeinfo['tts'] is True:
                 await self.bot.guild.voice_client.disconnect()
+        """
 
 
 async def setup(bot: commands.Bot) -> None:
