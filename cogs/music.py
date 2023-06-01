@@ -51,7 +51,7 @@ ytdl_playlist = yt_dlp.YoutubeDL(ytdl_format_options_playlist)
 
 player = None
 
-duration = 0
+duration = asyncio.Queue()
 
 duration_now = 0
 
@@ -97,7 +97,7 @@ class Music(commands.Cog):
             return
         player = await que.get() # キューから曲を取得
         global duration, duration_now
-        duration = player.duration
+        duration = await duration.get() # 残り時間を取得
         duration_now = duration
         loop = asyncio.get_event_loop() # タスク作成用
         interaction.guild.voice_client.play(player, after=lambda _:loop.create_task(self.play_song(interaction)))
@@ -118,6 +118,7 @@ class Music(commands.Cog):
             pass
         player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=stream) # ダウンロード
         await que.put(player) # キューを追加
+        await duration.put(player.duration) # 残り時間を追加
         await interaction.response.send_message(f"キューに追加しました。{player.title}", ephemeral=True)
         await self.play_song(interaction)
     
