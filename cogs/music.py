@@ -71,6 +71,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         if 'entries' in data:
             # take first item from a playlist
             data = data['entries'][0]
+        await duration.put(int(data['duration'])) # 残り時間を追加
         filename = data['url'] if stream else ytdl.prepare_filename(data)
         file = shutil.move(filename, f"./music/{filename}")
         return cls(discord.FFmpegPCMAudio(file, **ffmpeg_options), data=data)
@@ -118,7 +119,6 @@ class Music(commands.Cog):
             pass
         player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=stream) # ダウンロード
         await que.put(player) # キューを追加
-        await duration.put(player.duration) # 残り時間を追加
         await interaction.response.send_message(f"キューに追加しました。{player.title}", ephemeral=True)
         await self.play_song(interaction)
     
