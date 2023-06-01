@@ -63,7 +63,7 @@ class tts(commands.Cog):
 
     # メッセージ取得
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message:discord.Message):
         try:
                 if message.author.bot is False:
                         message_queue = deque([])
@@ -81,19 +81,19 @@ class tts(commands.Cog):
                             pass
                         else:
                             message = usernick + ":" + message
-                        if not self.bot.guild.voice_client.is_playing():
+                        if not message.guild.voice_client.is_playing():
                             g_tts = gTTS(text=message, lang='ja', tld='jp')
                             name = uuid.uuid1()
                             g_tts.save(f'./.tts_voice/{name}.mp3')
-                            self.bot.guild.voice_client.play(discord.FFmpegPCMAudio(f"./.tts_voice/{name}.mp3"))
+                            message.guild.voice_client.play(discord.FFmpegPCMAudio(f"./.tts_voice/{name}.mp3"))
                         else:
                             message_queue.append(message)
-                            while self.bot.guild.voice_client.is_playing():
+                            while message.guild.voice_client.is_playing():
                                 await asyncio.sleep(0.1)
                             g_tts = gTTS(message_queue.popleft(), lang='ja', tld='jp')
                             name = uuid.uuid1()
                             g_tts.save(f'./.tts_voice/{name}.mp3')
-                            self.bot.guild.voice_client.play(discord.FFmpegPCMAudio(f"./.tts_voice/{name}.mp3"))
+                            message.guild.voice_client.play(discord.FFmpegPCMAudio(f"./.tts_voice/{name}.mp3"))
         except TypeError:
             return
     """
