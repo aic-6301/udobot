@@ -18,11 +18,10 @@ class tts(commands.Cog):
         self.bot = bot
         self.jcall = False
         
-    group = app_commands.Group(name='tts', description='tts')
+    group = app_commands.Group(name='tts', description='tts', guild_ids=[1111683749969657938], guild_only=True)
 
     @group.command(name='connect', description='VCに接続します')
     @app_commands.guild_only()
-    @app_commands.guilds(1111683749969657938)
     async def join(self, interaction: discord.Interaction, joinannounce: bool = False):
             global joincall
             if interaction.guild.voice_client is None:
