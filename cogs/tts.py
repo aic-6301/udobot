@@ -30,8 +30,8 @@ class tts(commands.Cog):
                             joincall = True
                         await interaction.response.send_message('接続しました')
                         try:
-                            shutil.rmtree(self.bot.tts_file)
-                            os.mkdir(self.bot.tts_file)
+                            shutil.rmtree("./tts")
+                            os.mkdir("./tts")
                         except:
                             pass
                 else:
