@@ -17,8 +17,10 @@ class tts(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.jcall = False
+        
+    group = app_commands.Group(name='tts', description='tts')
 
-    @app_commands.command(name='connect', description='VCに接続します')
+    @group.command(name='connect', description='VCに接続します')
     @app_commands.guild_only()
     @app_commands.guilds(1111683749969657938)
     async def join(self, interaction: discord.Interaction, joinannounce: bool = False):
@@ -39,7 +41,7 @@ class tts(commands.Cog):
             else:
                 await interaction.response.send_message('他のチャンネルですでにbotが使用されているため使用できません')
 
-    @app_commands.command(name='disconnect', description='VCから切断します')
+    @group.command(name='disconnect', description='VCから切断します')
     @app_commands.guild_only()
     async def leave(self, interaction: discord.Interaction):
         if interaction.guild.voice_client is not None:
@@ -50,7 +52,7 @@ class tts(commands.Cog):
         await interaction.response.send_message('失敗しました')
 
     # stopコマンド
-    @app_commands.command(name='stop', description='読み上げを停止します')
+    @group.command(name='stop', description='読み上げを停止します')
     async def stop(self, interaction: discord.Interaction):
         if interaction.channel is interaction.guild.voice_client.channel:
             try:
