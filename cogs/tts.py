@@ -31,8 +31,8 @@ class tts(commands.Cog):
                             joincall = True
                         await interaction.response.send_message('接続しました')
                         try:
-                            shutil.rmtree("./tts")
-                            os.mkdir("./tts")
+                            shutil.rmtree("./tts/")
+                            os.mkdir("./tts/")
                         except:
                             pass
                 else:
@@ -85,16 +85,16 @@ class tts(commands.Cog):
                         if not messsage.guild.voice_client.is_playing():
                             g_tts = gTTS(text=message, lang='ja', tld='jp')
                             name = uuid.uuid1()
-                            g_tts.save(f'./.tts_voice/{name}.mp3')
-                            messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./.tts_voice/{name}.mp3"))
+                            g_tts.save(f'./tts/{name}.mp3')
+                            messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./tts/{name}.mp3"))
                         else:
                             message_queue.append(message)
                             while messsage.guild.voice_client.is_playing():
                                 await asyncio.sleep(0.1)
                             g_tts = gTTS(message_queue.popleft(), lang='ja', tld='jp')
                             name = uuid.uuid1()
-                            g_tts.save(f'./.tts_voice/{name}.mp3')
-                            messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./.tts_voice/{name}.mp3"))
+                            g_tts.save(f'./tts/{name}.mp3')
+                            messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./tts/{name}.mp3"))
         except TypeError:
             return
     """
