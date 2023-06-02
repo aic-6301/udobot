@@ -76,7 +76,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         try:
             file = shutil.move(filename, f"./music/{filename}")
         except Exception:
-            pass
+            file = filename
         return cls(discord.FFmpegPCMAudio(file, **ffmpeg_options), data=data)
 
 
