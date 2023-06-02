@@ -83,7 +83,7 @@ class tts(commands.Cog):
                         else:
                             message = usernick + ":" + message
                         if not messsage.guild.voice_client.is_playing():
-                            g_tts = gTTS(text=message, lang='ja', tld='jp')
+                            g_tts = gTTS(text=message, lang='en')
                             name = uuid.uuid1()
                             g_tts.save(f'./tts/{name}.mp3')
                             messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./tts/{name}.mp3"))
@@ -91,7 +91,7 @@ class tts(commands.Cog):
                             message_queue.append(message)
                             while messsage.guild.voice_client.is_playing():
                                 await asyncio.sleep(0.1)
-                            g_tts = gTTS(message_queue.popleft(), lang='ja', tld='jp')
+                            g_tts = gTTS(message_queue.popleft(), lang='en')
                             name = uuid.uuid1()
                             g_tts.save(f'./tts/{name}.mp3')
                             messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./tts/{name}.mp3"))
