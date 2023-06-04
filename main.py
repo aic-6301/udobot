@@ -3,6 +3,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import traceback
 from motor import motor_asyncio as motor
+import earthquake
 
 import discord
 from discord import Activity, ActivityType, Intents
@@ -35,6 +36,7 @@ class Bot(BotBase):
         await self.load_extension("jishaku") # jishakuをロード
         await self.change_presence(activity=discord.Game("色んな人によるこの鯖だけのぼっと"))
         print("起動したよ！！！")
+        earthquake.run()
 
 
 #実行する場所
