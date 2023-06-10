@@ -7,7 +7,7 @@ import requests
 class jma(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
+        self.jma_get.start()
     @tasks.loop(minutes=1)
     async def jma_get(self):
         with open("/data/data.json", "r") as f:
@@ -28,10 +28,8 @@ class jma(commands.Cog):
                 return
         else:
             return
+
         
-    @commands.Cog.listener()
-    async def on_ready(self):
-        self.jma_get.start()
     
     async def cog_unload(self):
         self.jma_get.stop()
