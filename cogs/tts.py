@@ -66,7 +66,7 @@ class tts(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, messsage:discord.Message):
         try:
-            if message.channel is message.guild.voice_client.channel:
+            if messsage.channel is messsage.guild.voice_client.channel:
                 if messsage.author.bot is False:
                         message_queue = deque([])
                         i = 0
