@@ -25,7 +25,7 @@ class Bot(BotBase):
         self.vc_info = self.db.vc_info
         self.status_msg = self.db.status_msg
         # Cogを'./cogs'からロード
-        for file in os.listdir("./cogs"):
+        for file in os.listdir("/cogs"):
             if file.endswith(".py"):
                 try:
                     await self.load_extension(f"cogs.{file[:-3]}")
