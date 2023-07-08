@@ -21,6 +21,7 @@ class Controlbutton(discord.ui.View):
     async def start_maintenance(self, button:discord.ui.Button, interaction: discord.Interaction):
         self.munesky_maintenance = True
         await interaction.response.send_message("メンテナンスモードに切り替えました")
+    
     @discord.ui.button(label="メンテナンス終了", style=discord.ButtonStyle.red)
     async def start_maintenance(self, button:discord.ui.Button, interaction: discord.Interaction):
         self.munesky_maintenance = False
@@ -51,7 +52,7 @@ class status(commands.Cog):
             if self.bot.munesky_maintenance is False:
                 munesky = "<:offline_status:1127193017762189322>ダウン"
                 if self.message is None:
-                    self.message = await self.bot.get_channel(1111683751014051962).send("<@964887498436276305> <@603948934087311360>", embed=discord.Embed(title="むねすきー稼働情報", 
+                    self.message = await self.bot.get_channel(1111683751014051962).send("<@&1111875162548220014>", embed=discord.Embed(title="むねすきー稼働情報", 
                                                                                                                                           description=f"むねすきーがダウンしていることを{discord.utils.format_dt(datetime.now())}に検知しました。\n復旧作業が必要な場合は復旧をしてください。"))
             if self.bot.munesky_maintenance is True:
                 munesky = "<:dnd_status:1127193014775853127>メンテナンス中"
