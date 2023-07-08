@@ -38,7 +38,6 @@ class Bot(BotBase):
                     traceback.print_exc()
         await self.load_extension("jishaku") # jishakuをロード
         await self.change_presence(activity=discord.Game("色んな人によるこの鯖だけのぼっと"))
-        await self.munesky_control()
         print("起動したよ！！！")
 
     

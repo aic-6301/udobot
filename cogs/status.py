@@ -26,10 +26,9 @@ class status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.send_system_status.start()
+        self.munesky_control(self)
 
-
-    @commands.Cog.listener()
-    async def on_ready(self):
+    async def munesky_control(self):
         await self.bot.get_channel(1127194229018472520).fetch_message(1127197198296297522).edit(view=Controlbutton(self))
         print("button ready")
 
