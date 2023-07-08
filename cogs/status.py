@@ -31,13 +31,13 @@ class status(commands.Cog):
 
     async def cog_load(self):
         msg = await self.bot.get_channel(1127194229018472520).fetch_message(1127197198296297522)
-        await msg.edit(view=Controlbutton(self))
+        await msg.edit(view=Controlbutton())
         print("button ready")
 
     @tasks.loop(minutes=1)
     async def send_system_status(self):
         msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
-        munesky_status = self.get_status_munesky(self)
+        munesky_status = self.get_status_munesky()
         if munesky_status == 0:
             munesky = "<:online_status:1127193009746886656>起動中"
             if self.message:
