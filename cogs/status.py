@@ -28,7 +28,7 @@ class status(commands.Cog):
                 munesky = "<:offline_status:1127193017762189322>ダウン"
                 await self.bot.get_channel(1111683751014051962).send("<@&964887498436276305> <@&603948934087311360>", embed=discord.Embed(title="むねすきー稼働情報", 
                                                                                                                                           description=f"むねすきーがダウンしていることを{discord.utils.format_dt(datetime.now())}に検知しました。\n復旧作業が必要な場合は復旧をしてください。"))
-            elif self.bot.munesky_maintenance == True:
+            if self.bot.munesky_maintenance is True:
                 munesky = "<:dnd_status:1127193014775853127>メンテナンス中"
         # CPU使用率を取得
         cpu_percent = psutil.cpu_percent(interval=1)
