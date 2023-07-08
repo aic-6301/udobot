@@ -29,7 +29,7 @@ class status(commands.Cog):
         self.munesky_control(self)
 
     async def munesky_control(self):
-        await self.bot.get_channel(1127194229018472520).fetch_message(1127197198296297522).edit(view=Controlbutton(self))
+        await self.bot.get_channel(1127194229018472520).fetch_message(1127197198296297522).edit(view=Controlbutton())
         print("button ready")
 
     @tasks.loop(minutes=1)
