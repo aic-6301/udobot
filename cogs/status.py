@@ -33,22 +33,11 @@ class status(commands.Cog):
         hdd = psutil.disk_usage("/")
         hdd_usage = round(hdd.used / hdd.total * 100, 1)
 
-        # SSD使用率を取得
-        ssd = psutil.disk_usage("C:")
-        ssd_usage = round(ssd.used / ssd.total * 100, 1)
-
         # 起動時間を取得
         uptime = int(time.time() - psutil.boot_time())
         uptime_hours, uptime_minutes = divmod(uptime // 60, 60)
         uptime_message = f"{uptime_hours}時間{uptime_minutes}分"
 
-        # メッセージの送信
-        message = f"CPU使用率: {cpu_percent}%\n"
-        message += f"メモリ使用率: {mem_percent}%\n"
-        message += f"利用可能なメモリ容量: {mem_avail:.2f} GB\n"
-        message += f"HDD使用率: {hdd_usage}%\n"
-        message += f"SSD使用率: {ssd_usage}%\n"
-        message += f"起動時間: {uptime_message}\n"
         embed = discord.Embed(title='サーバーステータス',description=f"CPU使用率:{cpu_percent}%\n メモリ使用率:{mem_percent} %\nメモリ空き領域:{mem_avail:.2f}GB\n HDD使用率:{hdd_usage}%\n 起動時間:{uptime_message}", color=discord.Colour.from_rgb(128,255,0), timestamp=datetime.now())
         await msg.edit(embed=embed)
 
