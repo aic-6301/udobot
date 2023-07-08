@@ -12,10 +12,25 @@ import os
 import time
 from datetime import datetime
 
+
+class Controlbutton(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+    
+    @discord.ui.button(label="メンテナンス開始", style=discord.ButtonStyle.green())
+    async def start_maintenance(self, button:discord.ui.Button, interaction: discord.Interaction):
+        self.bot.munesky_maintenance = True
+        await interaction.response.send_message("メンテナンスモードに切り替えました")
+
 class status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.send_system_status.start()
+        self.munesky_control(self)
+
+    async def munesky_control(self):
+        await self.bot.get_channel(1127194229018472520).fetch_message(1127197198296297522).edit(view=Controlbutton(self))
+        print("button ready")
 
     @tasks.loop(minutes=1)
     async def send_system_status(self):
