@@ -30,7 +30,8 @@ class status(commands.Cog):
 
 
     async def cog_load(self):
-        await self.bot.get_channel(1127194229018472520).fetch_message(1127197198296297522).edit(view=Controlbutton())
+        msg = await self.bot.get_channel(1127194229018472520).fetch_message(1127197198296297522)
+        await msg.edit(view=Controlbutton(self))
         print("button ready")
 
     @tasks.loop(minutes=1)
