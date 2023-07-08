@@ -24,7 +24,7 @@ class status(commands.Cog):
         if munesky_status == 0:
             munesky = "<:online_status:1127193009746886656>起動中"
         else:
-            if self.bot.munesky_maintenance == False:
+            if self.bot.munesky_maintenance is False:
                 munesky = "<:offline_status:1127193017762189322>ダウン"
                 await self.bot.get_channel(1111683751014051962).send("<@&964887498436276305> <@&603948934087311360>", embed=discord.Embed(title="むねすきー稼働情報", 
                                                                                                                                           description=f"むねすきーがダウンしていることを{discord.utils.format_dt(datetime.now())}に検知しました。\n復旧作業が必要な場合は復旧をしてください。"))
