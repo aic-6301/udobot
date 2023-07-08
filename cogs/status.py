@@ -17,12 +17,12 @@ class Controlbutton(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=None)
     
-    @discord.ui.button(label="メンテナンス開始", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="メンテナンス開始", style=discord.ButtonStyle.green, row=1)
     async def start_maintenance(self, button:discord.ui.Button, interaction: discord.Interaction):
         self.munesky_maintenance = True
         await interaction.response.send_message("メンテナンスモードに切り替えました")
     
-    @discord.ui.button(label="メンテナンス終了", style=discord.ButtonStyle.red)
+    @discord.ui.button(label="メンテナンス終了", style=discord.ButtonStyle.red, row=1)
     async def start_maintenance(self, button:discord.ui.Button, interaction: discord.Interaction):
         self.munesky_maintenance = False
         await interaction.response.send_message("通常モードに切り替えました")
