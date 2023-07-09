@@ -27,7 +27,6 @@ class Bot(BotBase):
         self.db = self.dbclient["udobot"]
         self.vc_info = self.db.vc_info
         self.status_msg = self.db.status_msg
-        self.munesky_maintenance = False
         # Cogを'./cogs'からロード
         for file in os.listdir(os.getenv("COG_FOLDER")):
             if file.endswith(".py"):

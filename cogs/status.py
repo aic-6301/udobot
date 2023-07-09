@@ -18,20 +18,20 @@ class Controlbutton(discord.ui.View):
         super().__init__(timeout=None)
     
     @discord.ui.button(label="メンテナンス開始", style=discord.ButtonStyle.green, row=1)
-    async def start_maintenance(self, button:discord.ui.Button, interaction: discord.Interaction):
+    async def start_maintenance(self, interaction: discord.Interaction, button:discord.ui.Button):
         self.munesky_maintenance = True
         await interaction.response.send_message("メンテナンスモードに切り替えました")
     
     @discord.ui.button(label="メンテナンス終了", style=discord.ButtonStyle.red, row=1)
-    async def start_maintenance(self, button:discord.ui.Button, interaction: discord.Interaction):
+    async def end_maintenance(self, interaction: discord.Interaction, button:discord.ui.Button):
         self.munesky_maintenance = False
         await interaction.response.send_message("通常モードに切り替えました")
-
 class status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.send_system_status.start()
         self.message = None
+        self.munesky_maintenance = False
 
 
     async def cog_load(self):
