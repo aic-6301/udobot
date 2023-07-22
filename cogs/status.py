@@ -36,7 +36,7 @@ class status(commands.Cog):
 
     async def cog_load(self):
         msg = await self.bot.get_channel(1127194229018472520).fetch_message(1127197198296297522)
-        await msg.edit(embed=discord.Embed(title="むねすきー管理", description="メンテナンスモードの管理が可能です。メンテナンス開始＝停止時通知が飛びません。\nメンテナンス終了=通常モードなります")view=Controlbutton())
+        await msg.edit(embed=discord.Embed(title="むねすきー管理", description="メンテナンスモードの管理が可能です。メンテナンス開始＝停止時通知が飛びません。\nメンテナンス終了=通常モードなります"), view=Controlbutton())
         print("button ready")
 
     @tasks.loop(minutes=1)
