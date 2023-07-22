@@ -4,3 +4,5 @@ Motor
 jishaku
 ping3
 psutil
+yt_dlp
+xmltodict
