@@ -7,10 +7,10 @@ import requests
 class jma(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.jma_get.start()
+        self.jmaget.start()
 
     @tasks.loop(minutes=1)
-    async def jma_get(self):
+    async def jmaget(self):
         with open("/data/data.json", "r") as f: # idを取得
             id = json.load(f)["id"]
             print(id)
