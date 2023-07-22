@@ -80,7 +80,6 @@ class status(commands.Cog):
 
     async def get_status_munesky(self):
         status = os.system("systemctl is-active misskey")
-        await self.bot.get_channel(1132227524970172426).send(status)
         if status == 0:
             return 0
         else:
