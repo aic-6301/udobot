@@ -79,8 +79,8 @@ class status(commands.Cog):
         await msg.edit(embed=embed)
 
     def get_status_munesky(self):
-        status = os.system("systemctl is-active --quiet misskey")
-        if status == "0":
+        status = os.system("systemctl is-active misskey")
+        if status == "active":
             return 0
         else:
             return 768
