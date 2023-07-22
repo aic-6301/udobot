@@ -42,7 +42,7 @@ class status(commands.Cog):
     @tasks.loop(minutes=1)
     async def send_system_status(self):
         msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
-        munesky_status = self.get_status_munesky()
+        munesky_status = await self.get_status_munesky()
         if munesky_status == 0:
             munesky = "<:online_status:1127193009746886656>起動中"
             if self.message:
@@ -78,8 +78,9 @@ class status(commands.Cog):
         embed = discord.Embed(title='サーバーステータス',description=f"CPU使用率:{cpu_percent}%\n メモリ使用率:{mem_percent} %\nメモリ空き領域:{mem_avail:.2f}GB\n HDD使用率:{hdd_usage}%\n 起動時間:{uptime_message}\n むねすきー稼働情報:{munesky}", color=discord.Colour.from_rgb(128,255,0), timestamp=datetime.now())
         await msg.edit(embed=embed)
 
-    def get_status_munesky(self):
+    async def get_status_munesky(self):
         status = os.system("systemctl is-active misskey")
+        await self.bot.get_channel(1132227524970172426).send(status)
         if status == "active":
             return 0
         else:
