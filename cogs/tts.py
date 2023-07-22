@@ -65,39 +65,40 @@ class tts(commands.Cog):
     # メッセージ取得
     @commands.Cog.listener()
     async def on_message(self, messsage:discord.Message):
-        try:
-            if messsage.channel is messsage.guild.voice_client.channel:
-                if messsage.author.bot is False:
-                        message_queue = deque([])
-                        i = 0
-                        for m in [messsage async for messsage in messsage.channel.history(limit=2)]:
-                            if i == 0:
-                                m1 = m.author.id
+        if message.guild.voice_client:
+            try:
+                if messsage.channel is messsage.guild.voice_client.channel:
+                    if messsage.author.bot is False:
+                            message_queue = deque([])
+                            i = 0
+                            for m in [messsage async for messsage in messsage.channel.history(limit=2)]:
+                                if i == 0:
+                                    m1 = m.author.id
+                                else:
+                                    m2 = m.author.id
+                                i = +1
+                            usernick = messsage.author.display_name
+                            message = messsage.content[:100]
+                            message = re.sub(regex, "URL ", message, flags=re.MULTILINE)
+                            if m1 == m2:
+                                pass
                             else:
-                                m2 = m.author.id
-                            i = +1
-                        usernick = messsage.author.display_name
-                        message = messsage.content[:100]
-                        message = re.sub(regex, "URL ", message, flags=re.MULTILINE)
-                        if m1 == m2:
-                            pass
-                        else:
-                            message = usernick + ":" + message
-                        if not messsage.guild.voice_client.is_playing():
-                            g_tts = gTTS(text=message, lang='en')
-                            name = uuid.uuid1()
-                            g_tts.save(f'./tts/{name}.mp3')
-                            messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./tts/{name}.mp3"))
-                        else:
-                            message_queue.append(message)
-                            while messsage.guild.voice_client.is_playing():
-                                await asyncio.sleep(0.1)
-                            g_tts = gTTS(message_queue.popleft(), lang='en')
-                            name = uuid.uuid1()
-                            g_tts.save(f'./tts/{name}.mp3')
-                            messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./tts/{name}.mp3"))
-        except TypeError:
-            return
+                                message = usernick + ":" + message
+                            if not messsage.guild.voice_client.is_playing():
+                                g_tts = gTTS(text=message, lang='en')
+                                name = uuid.uuid1()
+                                g_tts.save(f'./tts/{name}.mp3')
+                                messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./tts/{name}.mp3"))
+                            else:
+                                message_queue.append(message)
+                                while messsage.guild.voice_client.is_playing():
+                                    await asyncio.sleep(0.1)
+                                g_tts = gTTS(message_queue.popleft(), lang='en')
+                                name = uuid.uuid1()
+                                g_tts.save(f'./tts/{name}.mp3')
+                                messsage.guild.voice_client.play(discord.FFmpegPCMAudio(f"./tts/{name}.mp3"))
+            except TypeError:
+                return
     """
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
