@@ -8,7 +8,7 @@ class welcome(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         if member.bot:
-            await member.add_roles(1111687907892269067) # botロールを付与
+            await member.add_roles(self.bot.get_guild(1111683749969657938).get_role(1111687907892269067)) # botロールを付与
         else:
             await self.bot.get_channel(1111705826663616623).send(embed=discord.Embed(
                 title="ユーザー入室", 

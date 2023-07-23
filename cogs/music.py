@@ -73,7 +73,10 @@ class YTDLSource(discord.PCMVolumeTransformer):
             data = data['entries'][0]
         await duration.put(int(data['duration'])) # 残り時間を追加
         filename = data['url'] if stream else ytdl.prepare_filename(data)
-        file = shutil.move(filename, f"./music/{filename}")
+        try:
+            file = shutil.move(filename, f"./music/{filename}")
+        except Exception:
+            file = filename
         return cls(discord.FFmpegPCMAudio(file, **ffmpeg_options), data=data)
 
 

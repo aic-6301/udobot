@@ -13,14 +13,15 @@ class ping(commands.Cog):
     @app_commands.guilds(1111683749969657938)
     async def ping(self, interaction:discord.Interaction, site: str =None):
         if site is None:
-            await interaction.response.send_message(embed=discord.Embed(title=f":ping_pong:Pong!", description=f"{round(self.bot.latency *1000)}ms" , color=discord.Colour.from_rgb(128,255,0)))
+            await interaction.response.send_message(embed=discord.Embed(title=f":ping_pong:Pong!", 
+            description=f"{round(self.bot.latency *1000)}ms" , color=discord.Colour.from_rgb(128,255,0)))
         else:
             try:
-                target = site.replace("https://", "")
+                target = site.replace("https://", "") # https://を置き換える
             except Exception:
                 pass
             try:
-                result = int(pinge(target, unit="ms"))
+                result = int(pinge(target, unit="ms")) # pingを実行
                 if int(result) <= 0:
                     await interaction.response.send_message("失敗しました。本当にそのサイトは存在するか調べてください。", ephemeral=True)
                 else:
