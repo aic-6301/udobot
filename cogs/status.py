@@ -1,10 +1,8 @@
 from discord import app_commands
 import discord
 from ping3 import ping as ping
-import discord.app_commands
 from discord.ext import commands, tasks
 from discord.utils import get 
-from ping3 import ping #ping取得
 import asyncio
 from dotenv import load_dotenv
 import psutil
