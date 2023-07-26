@@ -42,7 +42,7 @@ class status(commands.Cog):
     @tasks.loop(minutes=30)
     async def send_system_status(self):
         msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
-
+        # TODO:きれいにする
         munesky_status = self.get_status_munesky() # munesky稼働情報を取得
         db_status = self.get_status_db() # postgresqlの稼働情報を取得
         if munesky_status == 0:
