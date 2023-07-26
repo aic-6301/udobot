@@ -1,6 +1,6 @@
 from discord import app_commands
 import discord
-from ping3 import ping as ping
+from ping3 import ping
 from discord.ext import commands, tasks
 from discord.utils import get 
 import asyncio
