@@ -19,12 +19,12 @@ class Controlbutton(discord.ui.View):
     
     @discord.ui.button(label="メンテナンス開始", style=discord.ButtonStyle.green, row=1)
     async def start_maintenance(self, interaction: discord.Interaction, button:discord.ui.Button):
-        self.munesky_maintenance = True
+        status.munesky_maintenance = True
         await interaction.response.send_message("メンテナンスモードに切り替えました")
     
     @discord.ui.button(label="メンテナンス終了", style=discord.ButtonStyle.red, row=1)
     async def end_maintenance(self, interaction: discord.Interaction, button:discord.ui.Button):
-        self.munesky_maintenance = False
+        status.munesky_maintenance = False
         await interaction.response.send_message("通常モードに切り替えました")
 class status(commands.Cog):
     def __init__(self, bot):
@@ -51,6 +51,7 @@ class status(commands.Cog):
             if self.message:
                 self.message.edit(embed=discord.Embed(title="むねすきー稼働情報", description="むねすきーが復活しました。"))
                 self.message = None
+
         elif munesky_status or db_status == 768:
             if self.munesky_maintenance is False:
                 munesky = "<:offline_status:1127193017762189322>ダウン"
@@ -58,7 +59,7 @@ class status(commands.Cog):
                 if self.message is None:
                     self.message = await self.bot.get_channel(1111683751014051962).send("<@&1111875162548220014>", embed=discord.Embed(title="むねすきー稼働情報", 
                     description=f"むねすきーがダウンしていることを{discord.utils.format_dt(datetime.now())}に検知しました。\n復旧作業が必要な場合は復旧をしてください。"))
-            if self.munesky_maintenance is True:
+            elif self.munesky_maintenance is True:
                 munesky = "<:dnd_status:1127193014775853127>メンテナンス中"
 
         # CPU使用率を取得
@@ -97,13 +98,46 @@ class status(commands.Cog):
             return 0
         else:
             return 768
-        
+    
+    def get_status_aicbot(self):
+        status = os.system("systemctl is-active aicbot")
+        if status == 0:
+            return 0
+        else:
+            return 768
+
+
+    # systemd関係
+    @tasks.loop(minutes=15)
+    async def bots_check(self):
+        munesky_status = self.get_status_munesky() # muneskyステータス
+        aicbot_status = self.get_status_aicbot() #aicbotステータス
+        db_status = self.get_status_db() # postgresqlステータス
+        if munesky_status and db_status == 0:
+            munesky = "<:online_status:1127193009746886656>オンライン"
+            db = "<:online_status:1127193009746886656>オンライン"
+        else:
+            munesky = "<:offline_status:1127193017762189322>オフライン"
+            db = "<:offline_status:1127193017762189322>オフライン"
+            await self.bot.owner.send("muneskyが停止中")
+        if aicbot_status == 0:
+            aicbot = "<:online_status:1127193009746886656>オンライン"
+        else:
+            aicbot = "<:offline_status:1127193017762189322>オフライン"
+        if munesky_status or db_status or aicbot_status == 0:
+            color = discord.Colour.from_rgb(128,255,0)
+        else:
+            color = discord.Color.yellow()
+        msg = await self.bot.get_channel(1112710479874379837).fetch_message(1133626567751377018)
+        await msg.edit(embed=discord.Embed(title="その他のステータス",description=f"munesky:{munesky}\n db:{db}\n aicbot:{aicbot}", timestamp=datetime.now(), color=color))
 
     # cogがアンロードされたときにステータス更新を止める。
     async def cog_unload(self):
         self.send_system_status.stop()
         msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
+        msge = await self.bot.get_channel(1112710479874379837).fetch_message(1133626567751377018)
         await msg.edit(embed=discord.Embed(title="サーバーステータス",description="更新停止中", timestamp=datetime.now(), color=discord.Color.red()))
+        await msg.edit(embed=discord.Embed(title="その他のステータス",description="更新停止中", timestamp=datetime.now(), color=discord.Color.red()))
     
     
 
