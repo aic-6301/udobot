@@ -85,14 +85,14 @@ class Music(commands.Cog):
         self.bot = bot
 
     group = app_commands.Group(name="music", description="音楽関係のコマンド", guild_ids=[1111683749969657938], guild_only=True)
-    
+
     @tasks.loop(seconds=1) # 秒数計算
     async def timer(self):
         global duration_now
         if duration_now <= 0:
             self.timer.stop()
         duration_now = duration_now - 1
-    
+
     async def play_song(self, interaction):
         global player
         if interaction.guild.voice_client.is_playing(): # 再生中か確認
@@ -124,7 +124,7 @@ class Music(commands.Cog):
         await que.put(player) # キューを追加
         await interaction.response.send_message(f"キューに追加しました。{player.title}", ephemeral=True)
         await self.play_song(interaction)
-    
+
     @group.command()
     async def radio(self, interaction:discord.Interaction, *, url:str):
         if not interaction.guild.voice_client:
@@ -138,7 +138,7 @@ class Music(commands.Cog):
         await interaction.response.send_message("キューに追加しました。", ephemeral=True)
         interaction.guild.voice_client.play(discord.FFmpegPCMAudio(url)) # ラジオを再生
         await interaction.channel.send(f"再生中: {url}")
-    
+
     @group.command()
     async def resume(self, interaction):
         if interaction.guild.voice_client is None:
@@ -147,7 +147,7 @@ class Music(commands.Cog):
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         interaction.guild.voice_client.resume()
         await interaction.response.send_message("再開しました。", ephemeral=True)
-    
+
     @group.command()
     async def pause(self, interaction):
         if interaction.guild.voice_client is None:
@@ -188,7 +188,7 @@ class Music(commands.Cog):
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         interaction.guild.voice_client.stop() # 再生停止
         await interaction.response.send_message("曲を飛ばしました。")
-    
+
     @group.command(name="nowplaying")
     async def nowplaying(self, interaction:discord.Interaction):
         global player, duration, duration_now
@@ -218,8 +218,8 @@ class Music(commands.Cog):
             i = i+1
         await interaction.response.send_message(embed=discord.Embed(title="キューリスト", description=a, color=discord.Color.green()))"""
 
-            
-        
-        
+
+
+
 async def setup(bot):
     await bot.add_cog(Music(bot))

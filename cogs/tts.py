@@ -17,7 +17,7 @@ class tts(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.jcall = False
-        
+
     group = app_commands.Group(name='tts', description='tts', guild_ids=[1111683749969657938], guild_only=True)
 
     @group.command(name='connect', description='VCに接続します')

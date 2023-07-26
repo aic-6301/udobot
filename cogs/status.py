@@ -97,7 +97,7 @@ class status(commands.Cog):
             return 768
         
 
-    # cogがアンロードされたときにステータス更新を止める。
+# cogがアンロードされたときにステータス更新を止める。
     async def cog_unload(self):
         self.send_system_status.stop()
         msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
