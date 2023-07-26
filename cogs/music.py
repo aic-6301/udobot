@@ -143,7 +143,7 @@ class Music(commands.Cog):
     async def resume(self, interaction):
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
-        elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
+        if interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         interaction.guild.voice_client.resume()
         await interaction.response.send_message("再開しました。", ephemeral=True)
@@ -152,7 +152,7 @@ class Music(commands.Cog):
     async def pause(self, interaction):
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
-        elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
+        if interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         interaction.guild.voice_client.pause()
         await interaction.response.send_message("一時停止します。", ephemeral=True)
@@ -162,7 +162,7 @@ class Music(commands.Cog):
         """ボリュームを変更します。"""
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
-        elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
+        if interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         if 0 < volume > 200:
             await interaction.response.send_message("0〜200の間のみ指定可能です。", ephemeral=True)
@@ -174,7 +174,7 @@ class Music(commands.Cog):
         """再生を停止し、切断します。"""
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
-        elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
+        if interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         que.empty()
         await interaction.guild.voice_client.disconnect()
@@ -184,7 +184,7 @@ class Music(commands.Cog):
     async def skip(self, interaction:discord.Interaction):
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
-        elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
+        if interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         interaction.guild.voice_client.stop() # 再生停止
         await interaction.response.send_message("曲を飛ばしました。")
@@ -194,7 +194,7 @@ class Music(commands.Cog):
         global player, duration, duration_now
         if interaction.guild.voice_client is None:
             return await interaction.response.send_message("VCに接続されていません！")
-        elif interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
+        if interaction.guild.voice_client is not None and interaction.guild.voice_client.channel != interaction.channel:
             await interaction.response.send_message("すでに別のチャンネルに接続しています！")
         if interaction.guild.voice_client.is_playing():
             await interaction.response.send_message(f"再生中: {player.title}\n{datetime.timedelta(seconds=duration_now)} / {datetime.timedelta(seconds=duration)}")
