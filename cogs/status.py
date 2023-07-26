@@ -39,18 +39,22 @@ class status(commands.Cog):
         await msg.edit(embed=discord.Embed(title="むねすきー管理", description="メンテナンスモードの管理が可能です。メンテナンス開始＝停止時通知が飛びません。\nメンテナンス終了=通常モードなります"), view=Controlbutton())
         print("button ready")
 
-    @tasks.loop(minutes=1)
+    @tasks.loop(minutes=30)
     async def send_system_status(self):
         msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
+
         munesky_status = self.get_status_munesky() # munesky稼働情報を取得
+        db_status = self.get_status_db() # postgresqlの稼働情報を取得
         if munesky_status == 0:
             munesky = "<:online_status:1127193009746886656>起動中"
+            color = discord.Colour.from_rgb(128,255,0)
             if self.message:
                 self.message.edit(embed=discord.Embed(title="むねすきー稼働情報", description="むねすきーが復活しました。"))
                 self.message = None
-        else:
+        elif munesky_status or db_status == 768:
             if self.munesky_maintenance is False:
                 munesky = "<:offline_status:1127193017762189322>ダウン"
+                color = discord.Color.yellow()
                 if self.message is None:
                     self.message = await self.bot.get_channel(1111683751014051962).send("<@&1111875162548220014>", embed=discord.Embed(title="むねすきー稼働情報", 
                     description=f"むねすきーがダウンしていることを{discord.utils.format_dt(datetime.now())}に検知しました。\n復旧作業が必要な場合は復旧をしてください。"))
@@ -72,8 +76,12 @@ class status(commands.Cog):
         uptime_hours, uptime_minutes = divmod(uptime // 60, 60)
         uptime_message = f"{uptime_hours}時間{uptime_minutes}分"
 
-        embed = discord.Embed(title='サーバーステータス',description=f"CPU使用率:{cpu_percent}%\n メモリ使用率:{mem_percent} %\nメモリ空き領域:{mem_avail:.2f}GB\n HDD使用率:{hdd_usage}%\n 起動時間:{uptime_message}\n むねすきー稼働情報:{munesky}", color=discord.Colour.from_rgb(128,255,0), timestamp=datetime.now())
+        embed = discord.Embed(title='サーバーステータス'
+        ,description=f"CPU使用率:{cpu_percent}%\n メモリ使用率:{mem_percent} %\nメモリ空き領域:{mem_avail:.2f}GB\n HDD使用率:{hdd_usage}%\n 起動時間:{uptime_message}\n むねすきー稼働情報:{munesky}",
+        color=color, timestamp=datetime.now())
         await msg.edit(embed=embed)
+
+
     # systemctlからmuneskyの稼働情報を取得
     def get_status_munesky(self):
         status = os.system("systemctl is-active misskey")
@@ -81,10 +89,21 @@ class status(commands.Cog):
             return 0
         else:
             return 768
+
+    # systemdからdbが起動してるか確認
+    def get_status_db(self):
+        status = os.system("systemctl is-active postgresql@13-main")
+        if status == 0:
+            return 0
+        else:
+            return 768
         
+
     # cogがアンロードされたときにステータス更新を止める。
     async def cog_unload(self):
         self.send_system_status.stop()
+        msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
+        await msg.edit(embed=discord.Embed(title="サーバーステータス",description="更新停止中", timestamp=datetime.now(), color=discord.Color.red()))
     
     
 
