@@ -17,7 +17,7 @@ class welcome(commands.Cog):
                 .add_field(name="名前", value=member.name)
                 .add_field(name="登録日時", value=member.created_at)
                 )
-            
+
 async def setup(bot):
     await bot.add_cog(welcome(bot))
-    
+

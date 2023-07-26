@@ -39,7 +39,7 @@ class Bot(BotBase):
         await self.change_presence(activity=discord.Game("色んな人によるこの鯖だけのぼっと"))
         print("起動したよ！！！")
 
-    
+
 
 #実行する場所
 if __name__ == "__main__":
