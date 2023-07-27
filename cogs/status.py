@@ -1,10 +1,8 @@
 from discord import app_commands
 import discord
-from ping3 import ping as ping
-import discord.app_commands
+from ping3 import ping
 from discord.ext import commands, tasks
 from discord.utils import get 
-from ping3 import ping #ping取得
 import asyncio
 from dotenv import load_dotenv
 import psutil
@@ -51,7 +49,6 @@ class status(commands.Cog):
             if self.message:
                 self.message.edit(embed=discord.Embed(title="むねすきー稼働情報", description="むねすきーが復活しました。"))
                 self.message = None
-
         elif munesky_status or db_status == 768:
             if self.munesky_maintenance is False:
                 munesky = "<:offline_status:1127193017762189322>ダウン"
@@ -59,7 +56,7 @@ class status(commands.Cog):
                 if self.message is None:
                     self.message = await self.bot.get_channel(1111683751014051962).send("<@&1111875162548220014>", embed=discord.Embed(title="むねすきー稼働情報", 
                     description=f"むねすきーがダウンしていることを{discord.utils.format_dt(datetime.now())}に検知しました。\n復旧作業が必要な場合は復旧をしてください。"))
-            elif self.munesky_maintenance is True:
+            if self.munesky_maintenance is True:
                 munesky = "<:dnd_status:1127193014775853127>メンテナンス中"
 
         # CPU使用率を取得
@@ -138,6 +135,7 @@ class status(commands.Cog):
         msge = await self.bot.get_channel(1112710479874379837).fetch_message(1133626567751377018)
         await msg.edit(embed=discord.Embed(title="サーバーステータス",description="更新停止中", timestamp=datetime.now(), color=discord.Color.red()))
         await msg.edit(embed=discord.Embed(title="その他のステータス",description="更新停止中", timestamp=datetime.now(), color=discord.Color.red()))
+
     
     
 

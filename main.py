@@ -3,13 +3,16 @@ from pathlib import Path
 from dotenv import load_dotenv
 import traceback
 from motor import motor_asyncio as motor
-
+# discord lib
 import discord
 from discord import Activity, ActivityType, Intents
 from discord.ext.commands import Bot as BotBase
 
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
+
+
+
 
 class Bot(BotBase):
     def __init__(self):
@@ -25,7 +28,7 @@ class Bot(BotBase):
         self.vc_info = self.db.vc_info
         self.status_msg = self.db.status_msg
         # Cogを'./cogs'からロード
-        for file in os.listdir("./cogs"):
+        for file in os.listdir(os.getenv("COG_FOLDER")):
             if file.endswith(".py"):
                 try:
                     await self.load_extension(f"cogs.{file[:-3]}")
@@ -35,6 +38,7 @@ class Bot(BotBase):
         await self.load_extension("jishaku") # jishakuをロード
         await self.change_presence(activity=discord.Game("色んな人によるこの鯖だけのぼっと"))
         print("起動したよ！！！")
+
 
 
 #実行する場所
