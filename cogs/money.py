@@ -1,3 +1,4 @@
+import ast
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
@@ -35,7 +36,7 @@ class money(commands.Cog):
                 await interaction.response.send_message(f"100円から10万円までの金額を選択してください。\nselected_money={amount}", ephemeral=True)
         else:
             await interaction.response.send_message("お金を借りているようです。先にそちらをお返し下さい。", ephemeral=True)
-    
+
     @group.command(name="repay", description="お金を返します")
     @app_commands.describe(amount="何円返すか(100円から10万円まで選択可能)")
     async def repay(self, interaction: discord.Interaction, amount: int):
@@ -46,7 +47,7 @@ class money(commands.Cog):
         if msg is None:
             await interaction.response.send_message("お金を借りていないようです。お金を借りているときに使用してください。")
             return
-        load_json = eval(msg.content)
+        load_json = ast.literal_eval(msg.content)
         js = json.dumps(load_json)
         data = json.loads(js)
         print(data)
