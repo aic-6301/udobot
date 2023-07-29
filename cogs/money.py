@@ -51,7 +51,7 @@ class money(commands.Cog):
         data = json.loads(js)
         print(data)
         if data_response["cash"] < amount:
-            await interaction.response.send_message(f"お金が足りないようです。`bank`のほうにお金がある場合は、`%withdraw`でお金を`cash`のほうへ移してください。", ephemeral=True)
+            await interaction.response.send_message("お金が足りないようです。`bank`のほうにお金がある場合は、`%withdraw`でお金を`cash`のほうへ移してください。", ephemeral=True)
             return
         if data['amount'] < amount:
             repay_amount = data['amount']
