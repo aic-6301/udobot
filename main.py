@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import traceback
-from motor import motor_asyncio as motor
 # discord lib
 import discord
 from discord import Activity, ActivityType, Intents

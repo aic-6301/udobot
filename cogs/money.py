@@ -1,3 +1,4 @@
+import ast
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
@@ -31,12 +32,12 @@ class money(commands.Cog):
                             await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': amount, 'reason': f'借金(返済額:{amount}, 返済期限：{date_fix}日まで )'})
                     await interaction.response.send_message(f"付与が完了しました。{date_fi}までに、{amount}を</money repay:>で返してください。(自動返済機能はついていません。自分でお支払いください。\nまた、返済されなかった場合、自動的に引き落としされますのでご注意ください。)", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"21日以内に収めてください。", ephemeral=True)
+                    await interaction.response.send_message("21日以内に収めてください。", ephemeral=True)
             else:
                 await interaction.response.send_message(f"100円から10万円までの金額を選択してください。\nselected_money={amount}", ephemeral=True)
         else:
-            await interaction.response.send_message(f"お金を借りているようです。先にそちらをお返し下さい。", ephemeral=True)
-    
+            await interaction.response.send_message("お金を借りているようです。先にそちらをお返し下さい。", ephemeral=True)
+
     @group.command(name="repay", description="お金を返します")
     @app_commands.describe(amount="何円返すか(100円から10万円まで選択可能)")
     async def repay(self, interaction: discord.Interaction, amount: int):
@@ -47,21 +48,21 @@ class money(commands.Cog):
         if msg is None:
             await interaction.response.send_message("お金を借りていないようです。お金を借りているときに使用してください。")
             return
-        load_json = eval(msg.content)
+        load_json = ast.literal_eval(msg.content)
         js = json.dumps(load_json)
         data = json.loads(js)
         print(data)
         if data_response["cash"] < amount:
-            await interaction.response.send_message(f"お金が足りないようです。`bank`のほうにお金がある場合は、`%withdraw`でお金を`cash`のほうへ移してください。", ephemeral=True)
+            await interaction.response.send_message("お金が足りないようです。`bank`のほうにお金がある場合は、`%withdraw`でお金を`cash`のほうへ移してください。", ephemeral=True)
             return
         if data['amount'] < amount:
             repay_amount = data['amount']
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
-                    await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{repay_amount}", 'reason': f'返済(完済)'})
-            await interaction.response.send_message(f"返済が完了しました。<#1116997608574038126>でご確認ください。\nまた、返済額が多かったので、返済分だけ引きました。", ephemeral=True)
+                    await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{repay_amount}", 'reason': '返済(完済)'})
+            await interaction.response.send_message("返済が完了しました。<#1116997608574038126>でご確認ください。\nまた、返済額が多かったので、返済分だけ引きました。", ephemeral=True)
         elif data['amount'] == amount:
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
-                await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{amount}", 'reason': f'返済(完済)'})
+                await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{amount}", 'reason': '返済(完済)'})
             await msg.delete()
             return await interaction.response.send_message("返済が完了しました。<#1116997608574038126>でご確認ください。")
         elif data['amount'] > amount:
@@ -81,7 +82,7 @@ class money(commands.Cog):
             if now_day in msg.content:
                 data = json.dumps(msg.content)
                 async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
-                    await session.patch(url=f'{self.bot.ub_url}{data["user"]}', json={'cash': f"-{data['amount']}", 'reason': f'返済(強制引き落とし)'})
+                    await session.patch(url=f'{self.bot.ub_url}{data["user"]}', json={'cash': f"-{data['amount']}", 'reason': '返済(強制引き落とし)'})
                 await self.bot.get_channel(1111683751014051962).send(f"<@{data['user']}> 返済期間が過ぎたため、強制的に引き落としが行われました。\n引き落とし金額：{data['amount']}, 引き落とし時刻:{discord.utils.format_dt(datetime.now(), style='F')}({discord.utils.format_dt(datetime.now(), style='R')})")
             else:
                 pass
