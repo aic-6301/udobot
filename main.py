@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import traceback
-from motor import motor_asyncio as motor
 # discord lib
 import discord
 from discord import Activity, ActivityType, Intents
@@ -10,7 +9,7 @@ from discord.ext.commands import Bot as BotBase
 
 load_dotenv()
 token = os.getenv("DISCORD_BOT_TOKEN")
-
+unb_token = os.getenv("UNB_TOKEN")
 
 
 
@@ -23,10 +22,13 @@ class Bot(BotBase):
 
     async def on_ready(self):
         # DB関係
-        self.dbclient = motor.AsyncIOMotorClient("mongodb://localhost:27017")
-        self.db = self.dbclient["udobot"]
-        self.vc_info = self.db.vc_info
-        self.status_msg = self.db.status_msg
+        bot.db_ch = bot.get_channel(1134715149215866950)
+
+        # お金関係
+        bot.ub_url = 'https://unbelievaboat.com/api/v1/guilds/1111683749969657938/users/'
+        bot.ub_header = {"Authorization": unb_token, "Accept": "application/json"}
+
+
         # Cogを'./cogs'からロード
         for file in os.listdir(os.getenv("COG_FOLDER")):
             if file.endswith(".py"):
@@ -37,6 +39,7 @@ class Bot(BotBase):
                     traceback.print_exc()
         await self.load_extension("jishaku") # jishakuをロード
         await self.change_presence(activity=discord.Game("色んな人によるこの鯖だけのぼっと"))
+        await bot.tree.sync()
         print("起動したよ！！！")
 
 
