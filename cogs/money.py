@@ -24,7 +24,7 @@ class money(commands.Cog):
             if 100 <= amount <= 100000:
                 if day <= 21:
                     date = datetime.now() + timedelta(days=day)
-                    date_fix = date.strftime("%Y%M%D%H%M%S")
+                    date_fix = date.strftime("%Y%m%d%h%m%s")
                     json_data = {"user": interaction.user.id,'amount': amount, "day": date_fix}
                     await self.bot.db_ch.send(json_data)
                     date_fi = discord.utils.format_dt(date, style="F")
