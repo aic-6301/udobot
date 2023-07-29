@@ -23,11 +23,11 @@ class Bot(BotBase):
 
     async def on_ready(self):
         # DB関係
-        self.db_ch = self.bot.get_channel(1134715149215866950)
+        bot.db_ch = bot.get_channel(1134715149215866950)
 
         # お金関係
-        self.ub_url = 'https://unbelievaboat.com/api/v1/guilds/1111683749969657938/users/'
-        self.ub_header = {"Authorization": unb_token, "Accept": "application/json"}
+        bot.ub_url = 'https://unbelievaboat.com/api/v1/guilds/1111683749969657938/users/'
+        bot.ub_header = {"Authorization": unb_token, "Accept": "application/json"}
 
 
         # Cogを'./cogs'からロード
