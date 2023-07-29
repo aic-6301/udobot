@@ -30,7 +30,7 @@ class money(commands.Cog):
                             await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': amount, 'reason': f'借金(返済額:{amount}, 返済期限：{date_fix}日まで )'})
                     await interaction.response.send_message(f"付与が完了しました。{date_fi}までに、{amount}を</money repay:>で返してください。(自動返済機能はついていません。自分でお支払いください。\nまた、返済されなかった場合、自動的に引き落としされますのでご注意ください。)", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"21日以内に収めてください。", ephemeral=True)
+                    await interaction.response.send_message("21日以内に収めてください。", ephemeral=True)
             else:
                 await interaction.response.send_message(f"100円から10万円までの金額を選択してください。\nselected_money={amount}", ephemeral=True)
         else:
