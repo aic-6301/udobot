@@ -80,7 +80,7 @@ class money(commands.Cog):
             if now_day in msg.content:
                 data = json.dumps(msg.content)
                 async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
-                    await session.patch(url=f'{self.bot.ub_url}{data["user"]}', json={'cash': f"-{data['amount']}", 'reason': f'返済(強制引き落とし)'})
+                    await session.patch(url=f'{self.bot.ub_url}{data["user"]}', json={'cash': f"-{data['amount']}", 'reason': '返済(強制引き落とし)'})
                 await self.bot.get_channel(1111683751014051962).send(f"<@{data['user']}> 返済期間が過ぎたため、強制的に引き落としが行われました。\n引き落とし金額：{data['amount']}, 引き落とし時刻:{discord.utils.format_dt(datetime.now(), style='F')}({discord.utils.format_dt(datetime.now(), style='R')})")
             else:
                 pass
