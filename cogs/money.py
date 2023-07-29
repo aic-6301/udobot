@@ -56,7 +56,7 @@ class money(commands.Cog):
         if data['amount'] < amount:
             repay_amount = data['amount']
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
-                    await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{repay_amount}", 'reason': f'返済(完済)'})
+                    await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{repay_amount}", 'reason': '返済(完済)'})
             await interaction.response.send_message("返済が完了しました。<#1116997608574038126>でご確認ください。\nまた、返済額が多かったので、返済分だけ引きました。", ephemeral=True)
         elif data['amount'] == amount:
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
