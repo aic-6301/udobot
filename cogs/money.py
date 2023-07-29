@@ -11,6 +11,7 @@ import requests
 class money(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.check_debt.start()
 
     group = app_commands.Group(name="money", description="お金に関するコマンドです", guild_ids=[1111683749969657938], guild_only=True)
 
@@ -20,7 +21,7 @@ class money(commands.Cog):
         user_data = await self.get_debt_user(interaction)
         if user_data is None:
             if 100 <= amount <= 100000:
-                if day < 21:
+                if day <= 21:
                     date = datetime.now() + timedelta(days=day)
                     date_fix = date.strftime("%Y%M%D%H%M%S")
                     json_data = {"user": interaction.user.id,'amount': amount, "day": date_fix}
