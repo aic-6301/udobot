@@ -64,7 +64,7 @@ class money(commands.Cog):
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
                 await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{amount}", 'reason': '返済(完済)'})
             await msg.delete()
-            return await interaction.response.send_message("返済が完了しました。<#1116997608574038126>でご確認ください。")
+            await interaction.response.send_message("返済が完了しました。<#1116997608574038126>でご確認ください。")
         elif data['amount'] > amount:
             leftover_amount = data['amount'] - amount
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
@@ -72,7 +72,7 @@ class money(commands.Cog):
             data.update({"amount": leftover_amount})
             send_data = json.dumps(data)
             await msg.edit(content=send_data)
-            return await interaction.response.send_message(f"{amount}円を返済しました。{datetime.strftime(data['day'], '%y/%m/%d')}までに{leftover_amount}を返済してください。", ephemeral=True)
+            await interaction.response.send_message(f"{amount}円を返済しました。{datetime.strftime(data['day'], '%y/%m/%d')}までに{leftover_amount}を返済してください。", ephemeral=True)
 
 
     @tasks.loop(minutes=30)
