@@ -23,15 +23,16 @@ class money(commands.Cog):
         if user_data is None:
             if 100 <= amount <= 100000:
                 if day <= 21:
-                    await interaction.response.defer()
+                    await interaction.response.defer() # interactionの送信を送れることを送信(考え中に変える)
                     date = datetime.now() + timedelta(days=day)
-                    date_fix = date.strftime("%Y%m%d%h%m%s")
+                    date_fix = date.strftime("%Y/%m/%d")
                     json_data = {"user": interaction.user.id,'amount': amount, "day": date_fix}
                     await self.bot.db_ch.send(json_data)
-                    date_fi = discord.utils.format_dt(date, style="F")
+                    date_fi = discord.utils.format_dt(date, style="d")
                     async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
                             await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': amount, 'reason': f'借金(返済額:{amount}, 返済期限：{date_fix}日まで )'})
-                    await interaction.followup.send(f"付与が完了しました。{date_fi}までに、{amount}を</money repay:1134815192769896451>で返してください。(自動返済機能はついていません。自分でお支払いください。\nまた、返済されなかった場合、自動的に引き落としされますのでご注意ください。)", ephemeral=True)
+                    await interaction.followup.send(f"付与が完了しました。{date_fi}の0:00までに、{amount}を</money repay:1134815192769896451>で返してください。(自動返済機能はついていません。自分でお支払いください。\nまた、返済されなかった場合、自動的に引き落としされますのでご注意ください。)", delete_after=10)
+                    # 遅らせたものを送信する(自分だけ表示は不可なため、10秒後に削除)
                 else:
                     await interaction.response.send_message("21日以内に収めてください。", ephemeral=True)
             else:
@@ -47,41 +48,44 @@ class money(commands.Cog):
         print(data_response)
         msg = await self.get_debt_user(interaction)
         if msg is None:
-            await interaction.followup.send("お金を借りていないようです。お金を借りているときに使用してください。")
+            await interaction.response.send_message("お金を借りていないようです。お金を借りているときに使用してください。", ephemeral=True)
             return
         load_json = ast.literal_eval(msg.content)
         js = json.dumps(load_json)
         data = json.loads(js)
         print(data)
         if data_response["cash"] < amount:
-            await interaction.followup.send("お金が足りないようです。`bank`のほうにお金がある場合は、`%withdraw`でお金を`cash`のほうへ移してください。", ephemeral=True)
+            await interaction.response.send_message("お金が足りないようです。`bank`のほうにお金がある場合は、`%withdraw`でお金を`cash`のほうへ移してください。", ephemeral=True)
             return
         if data['amount'] < amount:
-            await interaction.response.defer()
+            await interaction.response.defer() # interactionの送信を送れることを送信(考え中に変える)
             repay_amount = data['amount']
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
                     await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{repay_amount}", 'reason': '返済(完済)'})
-            await interaction.followup.send("返済が完了しました。<#1116997608574038126>でご確認ください。\nまた、返済額が多かったので、返済分だけ引きました。", ephemeral=True)
+            await interaction.followup.send("返済が完了しました。<#1116997608574038126>でご確認ください。\nまた、返済額が多かったので、返済分だけ引きました。", delete_after=10)
+            # 遅らせたものを送信する(自分だけ表示は不可なため、10秒後に削除)
         elif data['amount'] == amount:
-            await interaction.response.defer()
+            await interaction.response.defer() # interactionの送信を送れることを送信(考え中に変える)
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
                 await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{amount}", 'reason': '返済(完済)'})
             await msg.delete()
-            await interaction.followup.send("返済が完了しました。<#1116997608574038126>でご確認ください。")
+            await interaction.followup.send("返済が完了しました。<#1116997608574038126>でご確認ください。", delete_after=10)
+            # 遅らせたものを送信する(自分だけ表示は不可なため、10秒後に削除)
         elif data['amount'] > amount:
-            await interaction.response.defer()
+            await interaction.response.defer() # interactionの送信を送れることを送信(考え中に変える)
             leftover_amount = data['amount'] - amount
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
                     await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{amount}", 'reason': f'返済(未完済)\n残り:{leftover_amount}'})
             data.update({"amount": leftover_amount})
             send_data = json.dumps(data)
             await msg.edit(content=send_data)
-            await interaction.followup.send(f"{amount}円を返済しました。{datetime.strftime(data['day'], '%y/%m/%d')}までに{leftover_amount}を返済してください。", ephemeral=True)
+            await interaction.followup.send(f"{amount}円を返済しました。{datetime.strftime(data['day'], '%y/%m/%d')}までに{leftover_amount}を返済してください。", delete_after=10)
+            # 遅らせたものを送信する(自分だけ表示は不可なため、10秒後に削除)
 
 
-    @tasks.loop(minutes=30)
+    @tasks.loop(seconds=30)
     async def check_debt(self):
-        now_day = datetime.now().strftime("%Y%m%d")
+        now_day = datetime.now().strftime("%Y/%m/%d")
         async for msg in self.bot.db_ch.history(limit=None):
             if now_day in msg.content:
                 data = json.dumps(msg.content)
