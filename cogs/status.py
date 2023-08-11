@@ -37,7 +37,7 @@ class status(commands.Cog):
         await msg.edit(embed=discord.Embed(title="むねすきー管理", description="メンテナンスモードの管理が可能です。メンテナンス開始＝停止時通知が飛びません。\nメンテナンス終了=通常モードなります"), view=Controlbutton())
         print("button ready")
 
-    @tasks.loop(minutes=30)
+    @tasks.loop(seconds=30)
     async def send_system_status(self):
         msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
         # TODO:きれいにする
