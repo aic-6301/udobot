@@ -22,6 +22,7 @@ class Bot(BotBase):
 
     async def on_ready(self):
         # DB関係
+        bot.guild = bot.get_guild(1111683749969657938)
         bot.db_ch = bot.get_channel(1134715149215866950)
 
         # お金関係
