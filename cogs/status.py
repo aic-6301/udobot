@@ -65,7 +65,7 @@ class status(commands.Cog):
         mem = psutil.virtual_memory()
         mem_percent = mem.percent
         # メモリの利用可能な容量を取得
-        mem_avail = mem.available / 1024 / 1024 / 102
+        mem_avail = mem.available / 1024 / 1024 / 1002
         # HDD使用率を取得
         hdd = psutil.disk_usage("/")
         hdd_usage = round(hdd.used / hdd.total * 100, 1)
