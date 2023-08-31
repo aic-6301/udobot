@@ -7,16 +7,17 @@ class welcome(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
-        if member.bot:
-            await member.add_roles(self.bot.get_guild(1111683749969657938).get_role(1111687907892269067)) # botロールを付与
-        else:
-            await self.bot.get_channel(1111705826663616623).send(embed=discord.Embed(
-                title="ユーザー入室", 
-                description="このユーザーについての情報です。", 
-                color=member.accent_color)
-                .add_field(name="名前", value=member.name)
-                .add_field(name="登録日時", value=member.created_at)
-                )
+        if member.guild.id == 1041988027582521404:
+            if member.bot:
+                await member.add_roles(self.bot.get_guild(1041988027582521404).get_role(1092785086551818291)) # botロールを付与
+            else:
+                await self.bot.get_channel(1146652687824343071).send(embed=discord.Embed(
+                    title="ユーザー入室", 
+                    description="このユーザーについての情報です。", 
+                    color=member.accent_color)
+                    .add_field(name="名前", value=member.name)
+                    .add_field(name="登録日時", value=member.created_at)
+                    )
 
 async def setup(bot):
     await bot.add_cog(welcome(bot))
