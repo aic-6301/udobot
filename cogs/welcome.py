@@ -11,7 +11,7 @@ class welcome(commands.Cog):
             if member.bot:
                 await member.add_roles(self.bot.get_guild(1041988027582521404).get_role(1092785086551818291)) # botロールを付与
             else:
-                await self.bot.get_channel(1146652687824343071).send(embed=discord.Embed(
+                await self.bot.get_channel(1158704822711767080).send(embed=discord.Embed(
                     title="ユーザー入室", 
                     description="このユーザーについての情報です。", 
                     color=member.accent_color)
