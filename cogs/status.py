@@ -39,25 +39,25 @@ class status(commands.Cog):
 
     @tasks.loop(seconds=30)
     async def send_system_status(self):
-        msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
+        msg = await self.bot.get_channel(1145568259870044170).fetch_message(1145717456858534080)
         # TODO:きれいにする
         munesky_status = self.get_status_munesky() # munesky稼働情報を取得
         db_status = self.get_status_db() # postgresqlの稼働情報を取得
         if munesky_status == 0:
-            munesky = "<:online_status:1127193009746886656>起動中"
+            munesky = "<:online_status:1145719512767934607>起動中"
             color = discord.Colour.from_rgb(128,255,0)
             if self.message:
                 self.message.edit(embed=discord.Embed(title="むねすきー稼働情報", description="むねすきーが復活しました。"))
                 self.message = None
         elif munesky_status or db_status == 768:
             if self.munesky_maintenance is False:
-                munesky = "<:offline_status:1127193017762189322>ダウン"
+                munesky = "<:offline_status:1145719503997644800>ダウン"
                 color = discord.Color.yellow()
                 if self.message is None:
-                    self.message = await self.bot.get_channel(1111683751014051962).send("<@&1111875162548220014>", embed=discord.Embed(title="むねすきー稼働情報", 
+                    self.message = await self.bot.get_channel(1145593830998016070).send("<@&1111875162548220014>", embed=discord.Embed(title="むねすきー稼働情報", 
                     description=f"むねすきーがダウンしていることを{discord.utils.format_dt(datetime.now())}に検知しました。\n復旧作業が必要な場合は復旧をしてください。"))
             if self.munesky_maintenance is True:
-                munesky = "<:dnd_status:1127193014775853127>メンテナンス中"
+                munesky = "<:dnd_status:1145719509181796445>メンテナンス中"
 
         # CPU使用率を取得
         cpu_percent = psutil.cpu_percent(interval=1)
@@ -65,7 +65,7 @@ class status(commands.Cog):
         mem = psutil.virtual_memory()
         mem_percent = mem.percent
         # メモリの利用可能な容量を取得
-        mem_avail = mem.available / 1024 / 1024 / 102
+        mem_avail = mem.available / 1024 / 1024 / 1002
         # HDD使用率を取得
         hdd = psutil.disk_usage("/")
         hdd_usage = round(hdd.used / hdd.total * 100, 1)
@@ -100,7 +100,7 @@ class status(commands.Cog):
 # cogがアンロードされたときにステータス更新を止める。
     async def cog_unload(self):
         self.send_system_status.stop()
-        msg = await self.bot.get_channel(1112710479874379837).fetch_message(1113079189327843459)
+        msg = await self.bot.get_channel(1145568259870044170).fetch_message(1145717456858534080)
         await msg.edit(embed=discord.Embed(title="サーバーステータス",description="更新停止中", timestamp=datetime.now(), color=discord.Color.red()))
     
     
