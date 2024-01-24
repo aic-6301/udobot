@@ -18,6 +18,17 @@ class welcome(commands.Cog):
                     .add_field(name="名前", value=member.name)
                     .add_field(name="登録日時", value=member.created_at)
                     )
+        elif member.guild.id == 1199714895848022026:
+            if member.bot:
+                await member.add_roles(self.bot.get_guild(1198993360694816788).get_role(1199640973165207612)) # botロールを付与
+            else:
+                await self.bot.get_channel(1158704822711767080).send(embed=discord.Embed(
+                    title="ユーザー入室", 
+                    description="このユーザーについての情報です。", 
+                    color=discord.Color.blue())
+                    .add_field(name="名前", value=member.name)
+                    .add_field(name="登録日時", value=member.created_at)
+                    )
 
 async def setup(bot):
     await bot.add_cog(welcome(bot))
