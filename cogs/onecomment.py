@@ -41,7 +41,6 @@ class onecomment(commands.Cog):
             msg_time = message.created_at + timedelta(hours=9)
             if self.is_time_in_range(time(23, 59), time(0, 1), msg_time.time()):
                 self.messages[message.author.id] = (message.author.id, (message.created_at + timedelta(hours=9)).strftime('%H%M%S%f'), message.id)
-                await self.bot.get_channel(1180147591338537090).send(message.author.id)
             else:
                 # print("not time")
                 return
@@ -55,13 +54,12 @@ class onecomment(commands.Cog):
             if self.embed is None:
                 try:
                     print("いちこめらんきんぐ集計中...")
-                    sorted_messages = sorted(self.messages.items(), key=lambda x: abs(int(x[1][1]) - int(start_day.strftime("%H%M%S%f"))))
+                    sorted_messages = sorted(self.messages.items(), key=lambda x: abs(int(x[1][1]) - int(start_day.strftime("%H%M%S%f"))), reverse=True)
                     rank_message = "> 0:00に一番近く送ったメッセージランキング\n"
                     for i, msg in enumerate(sorted_messages):
                         rank_message += f"{i+1}位. <@{msg[1][0]}> 送信時間:{msg[1][1][:2]}:{msg[1][1][2:4]}:{msg[1][1][4:6]}.{msg[1][1][7:]} [Link](https://discord.com/channels/867677146260439050/867692303664807946/{msg[1][2]})\n"
                     self.embed = await channel.send(embed=discord.Embed(title="一コメランキング", description=rank_message, timestamp=now,color=discord.Color.blue()
                                                                         ).set_footer(text="この機能はβ版です。不具合等あればあいしぃーまで。" ))
-                    await self.bot.get_channel(1198993361152000112).send(self.messages)
                     self.messages = {}
                 except Exception as e:
                     self.embed = await channel.send(content="<@964887498436276305>", embed=discord.Embed(title="エラー", description=f"送信する際にエラーが発生しました。\nエラー内容：`{e}`", color=discord.Color.red()))
