@@ -14,14 +14,14 @@ class money(commands.Cog):
         self.bot = bot
         self.check_debt.start()
 
-    group = app_commands.Group(name="money", description="お金に関するコマンドです", guild_ids=[1111683749969657938], guild_only=True)
+    group = app_commands.Group(name="money", description="お金に関するコマンドです", guild_ids=[1198993360694816788], guild_only=True)
 
     @group.command(name="debt", description="お金を借ります")
-    @app_commands.describe(amount="何円借りるか(100円から10万円まで選択可能)", day="何日で返すか(1日から21日まで指定可能)")
+    @app_commands.describe(amount="何円借りるか(100円から200万円まで選択可能)", day="何日で返すか(1日から21日まで指定可能)")
     async def debt(self, interaction: discord.Interaction, amount: int, day: int):
         user_data = await self.get_debt_user(interaction)
         if user_data is None:
-            if 100 <= amount <= 100000:
+            if 100 <= amount <= 2000000:
                 if day <= 21:
                     await interaction.response.defer() # interactionの送信を送れることを送信(考え中に変える)
                     date = datetime.now() + timedelta(days=day)
@@ -41,7 +41,7 @@ class money(commands.Cog):
             await interaction.response.send_message("お金を借りているようです。先にそちらをお返し下さい。", ephemeral=True)
 
     @group.command(name="repay", description="お金を返します")
-    @app_commands.describe(amount="何円返すか(100円から10万円まで選択可能)")
+    @app_commands.describe(amount="何円返すか(100円から200万円まで選択可能)")
     async def repay(self, interaction: discord.Interaction, amount: int):
         response = requests.get(f"{self.bot.ub_url}{interaction.user.id}", headers=self.bot.ub_header)
         data_response = json.loads(response.text)
@@ -62,14 +62,14 @@ class money(commands.Cog):
             repay_amount = data['amount']
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
                     await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{repay_amount}", 'reason': '返済(完済)'})
-            await interaction.followup.send("返済が完了しました。<#1116997608574038126>でご確認ください。\nまた、返済額が多かったので、返済分だけ引きました。", ephemeral=True)
+            await interaction.followup.send("返済が完了しました。<#1199711299182018674>でご確認ください。\nまた、返済額が多かったので、返済分だけ引きました。", ephemeral=True)
             # 遅らせたものを送信する
         elif data['amount'] == amount:
             await interaction.response.defer() # interactionの送信を送れることを送信(考え中に変える)
             async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
                 await session.patch(url=f'{self.bot.ub_url}{interaction.user.id}', json={'cash': f"-{amount}", 'reason': '返済(完済)'})
             await msg.delete()
-            await interaction.followup.send("返済が完了しました。<#1116997608574038126>でご確認ください。", ephemeral=True)
+            await interaction.followup.send("返済が完了しました。<#1199711299182018674>でご確認ください。", ephemeral=True)
             # 遅らせたものを送信する
         elif data['amount'] > amount:
             await interaction.response.defer() # interactionの送信を送れることを送信(考え中に変える)
@@ -91,9 +91,12 @@ class money(commands.Cog):
                 data = json.dumps(msg.content)
                 async with aiohttp.ClientSession(headers=self.bot.ub_header) as session:
                     await session.patch(url=f'{self.bot.ub_url}{data["user"]}', json={'cash': f"-{data['amount']}", 'reason': '返済(強制引き落とし)'})
-                await self.bot.get_channel(1111683751014051962).send(f"<@{data['user']}> 返済期間が過ぎたため、強制的に引き落としが行われました。\n引き落とし金額：{data['amount']}, 引き落とし時刻:{discord.utils.format_dt(datetime.now(), style='F')}({discord.utils.format_dt(datetime.now(), style='R')})")
+                await self.bot.get_channel(1199711299182018674).send(f"<@{data['user']}> 返済期間が過ぎたため、強制的に引き落としが行われました。\n引き落とし金額：{data['amount']}, 引き落とし時刻:{discord.utils.format_dt(datetime.now(), style='F')}({discord.utils.format_dt(datetime.now(), style='R')})")
             else:
-                pass
+                data = json.dumps(msg.content)
+                data.update({"amount": data['amount'] + data['amount'] * (5 / 100)})
+                await msg.edit(data)
+                return
 
 
     async def get_debt_user(self, interaction: discord.Interaction):
