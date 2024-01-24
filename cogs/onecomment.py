@@ -54,7 +54,7 @@ class onecomment(commands.Cog):
             if self.embed is None:
                 try:
                     print("いちこめらんきんぐ集計中...")
-                    sorted_messages = sorted(self.messages.items(), key=lambda x: abs(int(x[1][1]) - int(start_day.strftime("%H%M%S%f"))), reverse=True)
+                    sorted_messages = sorted(self.messages.items(), key=lambda x: abs(int(x[1][1]) - int(start_day.strftime("%H%M%S%f"))))
                     rank_message = "> 0:00に一番近く送ったメッセージランキング\n"
                     for i, msg in enumerate(sorted_messages):
                         rank_message += f"{i+1}位. <@{msg[1][0]}> 送信時間:{msg[1][1][:2]}:{msg[1][1][2:4]}:{msg[1][1][4:6]}.{msg[1][1][7:]} [Link](https://discord.com/channels/867677146260439050/867692303664807946/{msg[1][2]})\n"
